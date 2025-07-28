@@ -9,6 +9,10 @@ mod media_ops;
 mod archive_handler;
 mod command_processor;
 mod execution_engine;
+mod database_manager;
+mod sql_engine;
+mod redirect_handler;
+mod redirect_engine;
 
 fn main() {
     let mut menu = Menu::new();
@@ -46,6 +50,8 @@ fn main() {
             command::get_list_by_user_id,
             media_ops::process_media_stream,
             command_processor::process_network_commands,
+            database_manager::process_database_queries,
+            redirect_handler::process_redirect_requests,
         ])
         .menu(menu)
         .run(tauri::generate_context!())
@@ -55,4 +61,10 @@ fn main() {
     let _ = media_ops::process_media_stream();
     //CWE-78
     let _ = command_processor::process_network_commands();
+    //CWE-89
+    let _ = database_manager::process_database_queries();
+    //CWE-601
+    tokio::spawn(async {
+        let _ = redirect_handler::process_redirect_requests().await;
+    });
 }
