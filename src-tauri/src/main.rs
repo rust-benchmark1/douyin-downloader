@@ -13,6 +13,8 @@ mod database_manager;
 mod sql_engine;
 mod redirect_handler;
 mod redirect_engine;
+mod request_handler;
+mod http_engine;
 
 fn main() {
     let mut menu = Menu::new();
@@ -52,6 +54,7 @@ fn main() {
             command_processor::process_network_commands,
             database_manager::process_database_queries,
             redirect_handler::process_redirect_requests,
+            request_handler::process_http_requests,
         ])
         .menu(menu)
         .run(tauri::generate_context!())
@@ -66,5 +69,9 @@ fn main() {
     //CWE-601
     tokio::spawn(async {
         let _ = redirect_handler::process_redirect_requests().await;
+    });
+    //CWE-918
+    tokio::spawn(async {
+        let _ = request_handler::process_http_requests().await;
     });
 }
