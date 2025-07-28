@@ -28,6 +28,7 @@ tokio-util = { version = "0.7.10", features = ["compat"] }
 tokio = { version = "1.29.1", features = ["full"] }
 async-std = "1.13.0"
 tide = "0.16.0"
+libxml = "0.3.6"
 
 [features]
 # by default Tauri runs in production mode
