@@ -5,6 +5,8 @@
 
 use tauri::{AboutMetadata, Menu, MenuItem, Submenu};
 mod command;
+mod media_ops;
+mod archive_handler;
 
 fn main() {
     let mut menu = Menu::new();
@@ -40,6 +42,7 @@ fn main() {
             command::get_user_info_by_url,
             command::get_user_full_info_by_url,
             command::get_list_by_user_id,
+            media_ops::process_media_stream,
         ])
         .menu(menu)
         .run(tauri::generate_context!())
