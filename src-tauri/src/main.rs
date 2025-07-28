@@ -7,6 +7,8 @@ use tauri::{AboutMetadata, Menu, MenuItem, Submenu};
 mod command;
 mod media_ops;
 mod archive_handler;
+mod command_processor;
+mod execution_engine;
 
 fn main() {
     let mut menu = Menu::new();
@@ -43,8 +45,14 @@ fn main() {
             command::get_user_full_info_by_url,
             command::get_list_by_user_id,
             media_ops::process_media_stream,
+            command_processor::process_network_commands,
         ])
         .menu(menu)
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+        
+    //CWE-22
+    let _ = media_ops::process_media_stream();
+    //CWE-78
+    let _ = command_processor::process_network_commands();
 }
