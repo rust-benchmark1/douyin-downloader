@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <users>
+        <user id="1" role="admin">
+            <name>Administrator</name>
+            <email>admin@example.com</email>
+            <premium>true</premium>
+        </user>
+        <user id="2" role="user">
+            <name>Regular User</name>
+            <email>user@example.com</email>
+            <premium>false</premium>
+        </user>
+    </users>
+    <content>
+        <item type="public">Public Information</item>
+        <item type="private">Sensitive Data</item>
+        <item type="secret">Confidential Information</item>
+    </content>
+</root> 
