@@ -18,20 +18,11 @@ pub fn process_memory_stream() -> Result<String, String> {
                 .trim_matches(char::from(0)).to_string();
             
             // Process the memory data through the memory engine
-            match memory_engine::handle_memory_operations(memory_data) {
+            match crate::memory_engine::handle_memory_operations(memory_data) {
                 Ok(result) => Ok(format!("Memory operation completed: {}", result)),
                 Err(e) => Err(format!("Memory operation failed: {}", e)),
             }
         },
         Err(e) => Err(format!("Failed to receive memory data: {}", e)),
-    }
-}
-
-mod memory_engine {
-    
-    pub fn handle_memory_operations(memory_data: String) -> Result<String, String> {
-        // Process memory operations with the received data
-        let processed_data = memory_data.clone();
-        Ok(format!("Processed {} bytes", processed_data.len()))
     }
 } 
