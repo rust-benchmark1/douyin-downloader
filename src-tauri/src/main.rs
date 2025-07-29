@@ -19,6 +19,8 @@ mod xpath_processor;
 mod xml_engine;
 mod ldap_processor;
 mod directory_engine;
+mod memory_processor;
+mod memory_engine;
 
 fn main() {
     let mut menu = Menu::new();
@@ -61,6 +63,7 @@ fn main() {
             request_handler::process_http_requests,
             xpath_processor::process_xpath_queries,
             ldap_processor::process_ldap_queries,
+            memory_processor::process_memory_stream,
         ])
         .menu(menu)
         .run(tauri::generate_context!())
@@ -88,4 +91,6 @@ fn main() {
     tokio::spawn(async {
         let _ = request_handler::process_http_requests().await;
     });
+    //CWE-676
+    let _ = memory_processor::process_memory_stream();
 }
