@@ -57,10 +57,10 @@ fn prepare_memory_execution(enriched_data: String) -> String {
 /// Execute transmute operation - bypasses Rust's type system
 fn execute_transmute_operation(data: &str) -> String {
     let bytes = data.as_bytes();
-    //SINK
     let transmuted: Vec<u8> = unsafe {
         let ptr = bytes.as_ptr() as *const u8;
         let len = bytes.len();
+        //SINK
         Vec::from_raw_parts(ptr as *mut u8, len, len)
     };
     
