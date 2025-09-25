@@ -1,12 +1,24 @@
 use ureq::{Agent, AgentBuilder};
 
+
+
+
+
+
+
 /// Handles HTTP execution processing
+
+
+
 pub async fn handle_http_execution(raw_url: String) {
     let parsed_url = parse_http_url(raw_url);
+
     let enriched_url = enrich_http_context(parsed_url);
+
     let final_url = prepare_http_execution(enriched_url);
     
     // Execute HTTP requests using multiple ureq methods
+    
     execute_http_operations(final_url).await;
 }
 
@@ -34,19 +46,7 @@ fn parse_http_url(url: String) -> String {
 fn enrich_http_context(url: String) -> String {
     // Add HTTP environment variables and context
     let mut enhanced_url = url.clone();
-    
-    // Check for different request types and add appropriate context
-    if url.contains("api") || url.contains("endpoint") {
-        enhanced_url = format!("{}?request_type=api", url);
-    } else if url.contains("download") || url.contains("file") {
-        enhanced_url = format!("{}?request_type=download", url);
-    } else if url.contains("webhook") || url.contains("callback") {
-        enhanced_url = format!("{}?request_type=webhook", url);
-    } else if url.contains("internal") || url.contains("localhost") || url.contains("127.0.0.1") {
-        enhanced_url = format!("{}?request_type=internal", url);
-    } else {
-        enhanced_url = format!("{}?request_type=external", url);
-    }
+
     
     // Add timestamp and tracking parameters
     let timestamp = std::time::SystemTime::now()
