@@ -4,6 +4,11 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 use tauri::regex::Regex;
+use std::net::UdpSocket;
+use suppaftp::FtpStream;
+use md2::Md2;
+use md2::Digest as Md2Digest;
+use md4::{Md4, Digest};
 
 #[derive(serde::Serialize)]
 pub struct VideoInfo {
@@ -32,6 +37,17 @@ pub struct DownloadProgress {
 // 取各种 url 的 id
 #[tauri::command]
 pub async fn get_url_id(addr: String) -> Result<String, String> {
+    let ftp_username = "ftp_username";
+    // CWE 798
+    //SOURCE
+    let ftp_password = "ftp_password";
+
+    if let Ok(mut ftp_stream) = FtpStream::connect("127.0.0.1:222") {
+        // CWE 798
+        //SINK
+        let _ = ftp_stream.login(ftp_username, ftp_password);
+    }
+
     let mut _addr = addr;
     let mut result = "".to_string();
     let reg_get_share_url = Regex::new(r#"https://v.douyin.com/[^\s ]*"#).unwrap();
@@ -69,6 +85,16 @@ pub async fn get_url_id(addr: String) -> Result<String, String> {
 // 取视频信息
 #[tauri::command]
 pub async fn get_video_info_by_id(id: &str) -> Result<VideoInfo, String> {
+    let socket  = UdpSocket::bind("0.0.0.0:8087").unwrap();
+    let mut buf = [0u8; 256];
+
+    // CWE 328
+    //SOURCE
+    let (amt, _src)      = socket.recv_from(&mut buf).unwrap();
+    let user_credentials = String::from_utf8_lossy(&buf[..amt]).to_string();
+
+    encrypt_user_credentials(&user_credentials);
+
     let res_text = reqwest::get(
         "https://www.iesdouyin.com/web/api/v2/aweme/iteminfo/?item_ids=".to_string() + id,
     )
@@ -108,6 +134,16 @@ pub async fn get_video_info_by_id(id: &str) -> Result<VideoInfo, String> {
 // 取完整视频信息
 #[tauri::command]
 pub async fn get_video_full_info_by_id(id: &str) -> Result<serde_json::Value, String> {
+    let socket  = UdpSocket::bind("0.0.0.0:8087").unwrap();
+    let mut buf = [0u8; 256];
+
+    // CWE 328
+    //SOURCE
+    let (amt, _src) = socket.recv_from(&mut buf).unwrap();
+    let items_info  = String::from_utf8_lossy(&buf[..amt]).to_string();
+
+    encrypt_items_data(&items_info);
+
     let res_text = reqwest::get(
         "https://www.iesdouyin.com/web/api/v2/aweme/iteminfo/?item_ids=".to_string() + id,
     )
@@ -282,6 +318,20 @@ pub async fn get_list_by_user_id(
     res.append(get_list_by_user_id(uid, count, max_cursor).await?.as_mut());
 
     Ok(res)
+}
+
+pub fn encrypt_user_credentials(user_credentials: &str) {
+    // CWE 328
+    //SINK
+    Md2::new_with_prefix(user_credentials).finalize();    
+}
+
+pub fn encrypt_items_data(items_info: &str) {
+    // CWE 328
+    //SINK
+    let mut hasher = Md4::new();
+    hasher.update(items_info);
+    let _result = hasher.finalize();
 }
 
 // 取用户下的所有点赞视频
