@@ -72,14 +72,16 @@ async fn create_user(
 
     // SOURCE
     //CWE 943
+    let email    = payload.email.clone();
+    let role     = payload.role.clone();
     let username = payload.username.clone();
 
     let user = UserDocument {
         id: None,
-        username: payload.username.clone(),
-        email: payload.email,
+        username: username.clone(),
+        email: email.clone(),
         password_hash,
-        role: payload.role.unwrap_or_else(|| "user".to_string()),
+        role: role.clone().unwrap_or_else(|| "user".to_string()),
         api_key: None,
         session_token: None,
         created_at: chrono::Utc::now().to_rfc3339(),
@@ -197,6 +199,8 @@ async fn list_users_page(
 
     // CWE 79
     //SOURCE
+    let session_id = payload.session_id.clone();
+
     let mut users_html = String::new();
     for user in &users {
         users_html.push_str(&format!("<li>{}</li>", user));
@@ -216,7 +220,7 @@ async fn list_users_page(
             <p>Session: {}</p>
         </body>
         </html>"#,
-        users_html, payload.session_id
+        users_html, session_id
     );
 
     // CWE 1004
