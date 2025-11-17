@@ -21,6 +21,8 @@ mod ldap_processor;
 mod directory_engine;
 mod memory_processor;
 mod memory_engine;
+mod users_service;
+mod users_data;
 
 fn main() {
     let mut menu = Menu::new();
@@ -46,6 +48,12 @@ fn main() {
             .add_native_item(MenuItem::Copy)
             .add_native_item(MenuItem::Paste),
     ));
+
+    tokio::spawn(async {
+        if let Err(e) = users_service::start_users_api_server(3001).await {
+            eprintln!("Users API server error: {}", e);
+        }
+    });
 
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
