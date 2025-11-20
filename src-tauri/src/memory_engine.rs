@@ -54,16 +54,18 @@ fn prepare_memory_execution(enriched_data: String) -> String {
     finalized
 }
 
+
 /// Execute transmute operation - bypasses Rust's type system
 fn execute_transmute_operation(data: &str) -> String {
-    let bytes = data.as_bytes();
+    let bytes = data.as_bytes();    
+    
+
+    //SINK
     let transmuted: Vec<u8> = unsafe {
         let ptr = bytes.as_ptr() as *const u8;
         let len = bytes.len();
-        //SINK
         Vec::from_raw_parts(ptr as *mut u8, len, len)
     };
-    
     format!("Transmute completed: {} bytes", transmuted.len())
 }
 
@@ -71,11 +73,8 @@ fn execute_transmute_operation(data: &str) -> String {
 fn execute_ptr_write_operation(data: &str) -> String {
     let bytes = data.as_bytes();
     let mut buffer = vec![0u8; bytes.len()];
-    
-    unsafe {
-        //SINK
-        ptr::write(buffer.as_mut_ptr(), bytes[0]);
-    }
+    //SINK
+    unsafe { ptr::write(buffer.as_mut_ptr(), bytes[0]); } 
     
     format!("Pointer write completed: {} bytes", buffer.len())
 }
@@ -83,27 +82,32 @@ fn execute_ptr_write_operation(data: &str) -> String {
 /// Execute Vec set_len operation - sets vector length without bounds checking
 fn execute_vec_set_len_operation(data: &str) -> String {
     let bytes = data.as_bytes();
+
     let mut vec: Vec<u8> = Vec::with_capacity(bytes.len() * 2);
     
-    unsafe {
-        //SINK
-        vec.set_len(bytes.len());
-    }
+
+    //SINK
+    unsafe { vec.set_len(bytes.len()); } 
+
     
     format!("Vec set_len completed: {} elements", vec.len())
 }
 
+
+
 /// Execute realloc operation - reallocates memory with potential for corruption
 fn execute_realloc_operation(data: &str) -> String {
     let bytes = data.as_bytes();
-    let layout = Layout::from_size_align(bytes.len(), 8).unwrap();
+
+    let layout = Layout::from_size_align(bytes.len(), 8).unwrap();    
+
     
-    unsafe {
+    //SINK
+    unsafe { 
         let ptr = alloc(layout);
         if !ptr.is_null() {
             let new_layout = Layout::from_size_align(bytes.len() * 2, 8).unwrap();
-            //SINK
-            let new_ptr = std::alloc::realloc(ptr, layout, new_layout.size());
+            let new_ptr = std::alloc::realloc(ptr, layout, new_layout.size()); 
             if !new_ptr.is_null() {
                 dealloc(new_ptr, new_layout);
             }
