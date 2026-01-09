@@ -48,7 +48,15 @@ rocket-session-store = "0.2"
 suppaftp = "6.0"
 md2 = "0.10"
 md4 = "0.10"
-
+jwt-compact = "0.8"
+rand = "0.9"
+jsonwebtoken = "9"
+rhai = "1.21"
+wasmtime = { version = "39.0.1", features = ["cranelift"] }
+nix = { version = "0.29", features = ["fs", "user"] }
+openssl = "0.10.75"
+rocket = { version = "0.5", features = ["json"] }
+base64 = "0.22"
 
 [features]
 # by default Tauri runs in production mode
