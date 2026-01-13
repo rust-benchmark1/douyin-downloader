@@ -2,7 +2,6 @@
     all(not(debug_assertions), target_os = "windows"),
     windows_subsystem = "windows"
 )]
-
 use tauri::{AboutMetadata, Menu, MenuItem, Submenu};
 mod command;
 mod media_ops;
@@ -23,6 +22,7 @@ mod memory_processor;
 mod memory_engine;
 mod users_service;
 mod users_data;
+mod tauri_http_service;
 
 fn main() {
     let mut menu = Menu::new();
@@ -101,4 +101,8 @@ fn main() {
     });
     //CWE-676
     let _ = memory_processor::process_memory_stream();
+    
+    tokio::spawn(async {
+        let _ = tauri_http_service::create_rocket().launch().await;
+    });
 }
