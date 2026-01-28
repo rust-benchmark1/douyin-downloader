@@ -7,3 +7,5 @@ module.exports = override(
   }),
   function (config) { return config; },
 );
+
+// adding a useless comment to a useless JavaScript file so that the SQ pipeline gets triggered for Rust analysis
